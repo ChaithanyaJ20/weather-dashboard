@@ -26,4 +26,4 @@ A modern weather dashboard built using React, Vite, Tailwind CSS, Recharts, and 
 
 ## Live Demo
 
-Add Vercel Link Here
+[ Vercel Link 🔗](https://weather-dashboard-beryl-omega.vercel.app/)
