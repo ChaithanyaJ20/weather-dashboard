@@ -5,6 +5,7 @@ import {
 const RecentSearches = ({
   searches,
   onSearchClick,
+  onClear,
 }) => {
   const { darkMode } =
     useTheme();
@@ -15,9 +16,36 @@ const RecentSearches = ({
 
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-bold mb-3">
-        Recent Searches
-      </h2>
+      <div
+  className="
+    flex
+    justify-between
+    items-center
+    mb-2
+  "
+>
+  <h2
+    className="
+      text-xl
+      font-bold
+    "
+  >
+    Recent Searches
+  </h2>
+
+  {searches.length > 0 && (
+    <button
+      onClick={onClear}
+      className="
+        text-red-500
+        text-sm
+        hover:underline
+      "
+    >
+      Clear
+    </button>
+  )}
+</div>
 
       <div className="flex flex-wrap gap-3">
         {searches.map((city, index) => (

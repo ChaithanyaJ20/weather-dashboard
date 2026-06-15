@@ -1,6 +1,9 @@
 import {
   useTheme,
 } from "../../context/ThemeContext";
+import {
+  getWeatherCondition,
+} from "../../utils/weatherCodes";
 
 const ForecastSection = ({
   forecast,
@@ -42,66 +45,94 @@ const ForecastSection = ({
         "
       >
         {forecast.time.map(
-          (day, index) => (
-            <div
-              key={day}
-              className={`
-                rounded-xl
-                shadow-md
-                p-4
-                text-center
-                transition
-                hover:scale-105
+  (day, index) => {
 
-                ${
-                  darkMode
-                    ? `
-                      bg-slate-800
-                      text-white
-                    `
-                    : `
-                      bg-white
-                      text-black
-                    `
-                }
-              `}
-            >
-              <p className="font-bold">
-                {new Date(
-                  day
-                ).toLocaleDateString(
-                  "en-US",
-                  {
-                    weekday:
-                      "short",
-                  }
-                )}
-              </p>
+    const condition =
+      getWeatherCondition(
+        forecast.weather_code[
+          index
+        ]
+      );
 
-              <p className="mt-3">
-                High:{" "}
-                {
-                  forecast
-                    .temperature_2m_max[
-                    index
-                  ]
-                }
-                °C
-              </p>
+    return (
+      <div
+        key={day}
+        className={`
+          rounded-xl
+          shadow-md
+          p-4
+          text-center
+          transition
+          hover:scale-105
 
-              <p>
-                Low:{" "}
-                {
-                  forecast
-                    .temperature_2m_min[
-                    index
-                  ]
-                }
-                °C
-              </p>
-            </div>
-          )
-        )}
+          ${
+            darkMode
+              ? `
+                bg-slate-800
+                text-white
+              `
+              : `
+                bg-white
+                text-black
+              `
+          }
+        `}
+      >
+        <p className="font-bold">
+          {new Date(
+            day
+          ).toLocaleDateString(
+            "en-US",
+            {
+              weekday:
+                "short",
+            }
+          )}
+        </p>
+
+        <div
+          className="
+            text-3xl
+            my-2
+          "
+        >
+          {condition.icon}
+        </div>
+
+        <p
+          className="
+            text-sm
+            mb-2
+          "
+        >
+          {condition.label}
+        </p>
+
+        <p className="mt-3">
+          High:{" "}
+          {
+            forecast
+              .temperature_2m_max[
+              index
+            ]
+          }
+          °C
+        </p>
+
+        <p>
+          Low:{" "}
+          {
+            forecast
+              .temperature_2m_min[
+              index
+            ]
+          }
+          °C
+        </p>
+      </div>
+    );
+  }
+)}
       </div>
     </div>
   );

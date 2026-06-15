@@ -30,7 +30,7 @@ export const getWeatherByCity = async (city) => {
   // Step 2: Get weather
 
   const weatherResponse = await axios.get(
-    `${WEATHER_BASE_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m`
+    `${WEATHER_BASE_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code`
   );
 
   return {
@@ -48,7 +48,10 @@ export const getWeatherByCity = async (city) => {
       weatherResponse.data.current.apparent_temperature,
 
     windSpeed:
-      weatherResponse.data.current.wind_speed_10m,
+  weatherResponse.data.current.wind_speed_10m,
+
+weatherCode:
+  weatherResponse.data.current.weather_code,
   };
 };
 export const getWeatherByCoordinates = async (
@@ -56,7 +59,7 @@ export const getWeatherByCoordinates = async (
   longitude
 ) => {
   const weatherResponse = await axios.get(
-    `${WEATHER_BASE_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m`
+    `${WEATHER_BASE_URL}?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code`
   );
 
   return {
@@ -75,7 +78,10 @@ export const getWeatherByCoordinates = async (
       weatherResponse.data.current.apparent_temperature,
 
     windSpeed:
-      weatherResponse.data.current.wind_speed_10m,
+  weatherResponse.data.current.wind_speed_10m,
+
+weatherCode:
+  weatherResponse.data.current.weather_code,
   };
 };
 export const getLocationName = async (

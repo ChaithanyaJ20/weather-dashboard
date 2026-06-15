@@ -1,10 +1,18 @@
 import {
   useTheme,
 } from "../../context/ThemeContext";
+import {
+  getWeatherCondition,
+} from "../../utils/weatherCodes";
 
 const WeatherCard = ({ weather }) => {
   const { darkMode } =
     useTheme();
+
+  const condition =
+    getWeatherCondition(
+      weather.weatherCode
+    );
 
   return (
     <div
@@ -23,6 +31,16 @@ const WeatherCard = ({ weather }) => {
       <h2 className="text-2xl font-bold">
         {weather.city}, {weather.country}
       </h2>
+
+      <div className="flex items-center gap-3 mt-3 mb-3">
+        <span className="text-4xl leading-none">
+          {condition.icon}
+        </span>
+
+        <span className="text-xl font-semibold">
+          {condition.label}
+        </span>
+      </div>
 
       <div className="mt-4">
         <h1 className="text-6xl font-bold">

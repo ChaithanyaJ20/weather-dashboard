@@ -17,24 +17,46 @@ import RecentSearches from "../components/weather/RecentSearches";
 import StatisticsSection from "../components/weather/StatisticsSection";
 import ThemeToggle from "../components/common/ThemeToggle";
 import ForecastSection from "../components/weather/ForecastSection";
+import FavoriteCities
+from "../components/weather/FavoriteCities";
+import WeatherTrendChart
+from "../components/weather/WeatherTrendChart";
+import CompareCities
+from "../components/weather/CompareCities";
 
+import ComparisonTable
+from "../components/weather/ComparisonTable";
 import {
   getWeatherByCity,
   getWeatherByCoordinates,
   getLocationName,
   getForecastByCoordinates,
 } from "../services/weatherService";
-
+import LoadingSkeleton
+from "../components/common/LoadingSkeleton";
 const HomePage = () => {
   const { darkMode } = useTheme();
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [compareLoading,
+  setCompareLoading] =
+  useState(false);
   const [error, setError] = useState("");
   const [recentSearches, setRecentSearches] =
   useState([]);
+  const [favorites, setFavorites] =
+  useState([]);
   const [forecast, setForecast] =
   useState(null);
+  const [
+  comparison,
+  setComparison,
+] = useState(null);
+const [
+  compareError,
+  setCompareError,
+] = useState("");
 
 useEffect(() => {
   console.log(
@@ -43,7 +65,29 @@ useEffect(() => {
   );
 }, [forecast]);
 
+useEffect(() => {
+  const storedSearches =
+    JSON.parse(
+      localStorage.getItem(
+        "recentSearches"
+      )
+    ) || [];
 
+  setRecentSearches(
+    storedSearches
+  );
+
+  const storedFavorites =
+    JSON.parse(
+      localStorage.getItem(
+        "favoriteCities"
+      )
+    ) || [];
+
+  setFavorites(
+    storedFavorites
+  );
+}, []);
 
 
 
@@ -163,6 +207,58 @@ const handleRecentSearch =
       setLoading(false);
     }
   };
+const handleAddFavorite =
+  (cityName) => {
+    if (
+      favorites.some(
+        (city) =>
+          city.toLowerCase() ===
+          cityName.toLowerCase()
+      )
+    )
+      return;
+
+    const updatedFavorites = [
+      ...favorites,
+      cityName,
+    ];
+
+    setFavorites(
+      updatedFavorites
+    );
+
+    localStorage.setItem(
+      "favoriteCities",
+      JSON.stringify(
+        updatedFavorites
+      )
+    );
+  };
+const handleRemoveFavorite =
+  (cityName) => {
+
+    const updated =
+      favorites.filter(
+        (city) =>
+          city !== cityName
+      );
+
+    setFavorites(updated);
+
+    localStorage.setItem(
+      "favoriteCities",
+      JSON.stringify(updated)
+    );
+};
+const handleClearRecentSearches =
+  () => {
+
+    setRecentSearches([]);
+
+    localStorage.removeItem(
+      "recentSearches"
+    );
+};
 const handleLocationWeather = () => {
   navigator.geolocation.getCurrentPosition(
     async (position) => {
@@ -218,6 +314,41 @@ const handleLocationWeather = () => {
     }
   );
 };
+const handleCompare = async (
+  city1,
+  city2
+) => {
+  try {
+    setCompareLoading(true);
+    setCompareError("");
+    setError("");
+
+    const cityA =
+      await getWeatherByCity(city1);
+
+    const cityB =
+      await getWeatherByCity(city2);
+
+    setComparison({
+      cityA,
+      cityB,
+    });
+  } catch (error) {
+    setCompareError(
+      "Unable to compare cities."
+    );
+
+  } finally {
+    setCompareLoading(false);
+  }
+};
+const isFavorite =
+  weather &&
+  favorites.some(
+    (fav) =>
+      fav.toLowerCase() ===
+      weather.city.toLowerCase()
+  );
   return (
     <div
   className={`min-h-screen ${
@@ -248,6 +379,21 @@ const handleLocationWeather = () => {
   onSearchClick={
     handleRecentSearch
   }
+  onClear={
+    handleClearRecentSearches
+  }
+/>
+<FavoriteCities
+  favorites={favorites}
+  onCityClick={
+    handleRecentSearch
+  }
+  onRemove={
+    handleRemoveFavorite
+  }
+  selectedCity={
+    weather?.city
+  }
 />
 
   {error && (
@@ -263,18 +409,75 @@ const handleLocationWeather = () => {
       {error}
     </div>
   )}
-
+{loading && (
+  <LoadingSkeleton />
+)}
   {weather && (
   <>
-    <WeatherCard weather={weather} />
+    <WeatherCard
+  weather={weather}
+/>
 
-    <StatisticsSection
-      weather={weather}
-    />
+<div className="mt-3">
+  <button
+    onClick={() =>
+      handleAddFavorite(
+        weather.city
+      )
+    }
+    disabled={isFavorite}
+    className={`
+      px-4
+      py-2
+      rounded-lg
+      text-white
+
+      ${
+        isFavorite
+          ? "bg-gray-500 cursor-not-allowed"
+          : "bg-yellow-500 hover:bg-yellow-600"
+      }
+    `}
+  >
+    {isFavorite
+      ? "⭐ Already Added"
+      : "⭐ Add to Favorites"}
+  </button>
+</div>
+
+<StatisticsSection
+  weather={weather}
+/>
     <ForecastSection
+      forecast={forecast}
+    />
+    <WeatherTrendChart
   forecast={forecast}
 />
   </>
+)}
+
+<CompareCities
+  onCompare={handleCompare}
+  loading={compareLoading}
+/>
+{compareError && (
+  <div
+    className="
+      mt-3
+      bg-red-100
+      text-red-700
+      p-3
+      rounded-lg
+    "
+  >
+    {compareError}
+  </div>
+)}
+{comparison && (
+  <ComparisonTable
+    comparison={comparison}
+  />
 )}
 </DashboardContainer>
     </div>
