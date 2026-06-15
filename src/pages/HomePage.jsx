@@ -479,6 +479,18 @@ const isFavorite =
     comparison={comparison}
   />
 )}
+
+<footer
+  className="
+    text-center
+    py-6
+    mt-10
+    text-sm
+    opacity-70
+  "
+>
+  © 2026 Chaithanya • Weather Dashboard
+</footer>
 </DashboardContainer>
     </div>
   );
